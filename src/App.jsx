@@ -1,14 +1,39 @@
-import { useEffect } from 'react';
+
+import { useEffect, useState } from 'react';
+import { fetchTodoById, fetchTodoList } from './actions/requests';
+// import $api from './requester';
 
 function App() {
+  const [todoList, setTodoList] = useState([]);
+  const [limit, setLimit] = useState(0);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    throw new Error()
-  }, [])
+    const params = {
+      _limit: limit,
+      _page: page,
+    };
+
+    fetchTodoList(params)
+      .then((data) => {
+        setTodoList(data);
+      });
+  }, [limit, page]);
+
+  useEffect(() => {
+    fetchTodoById(1)
+      .then((data) => {
+        console.log(data);
+      });
+  }, []);
 
   return (
-    <h1>hello world</h1>
-  )
+    <div className="App">
+      <input type="number" value={page} onChange={(e) => setPage(e.target.value)} />
+      <input type="number" value={limit} onChange={(e) => setLimit(e.target.value)} />
+      {todoList.map((item) => <div key={item.id}>{`${item.id} ${item.title}`}</div>)}
+    </div>
+  );
 }
 
 export default App;
